@@ -189,11 +189,11 @@
 
     <script>
         let api = null;
-        // Using a simple room name format that works with JaaS
-        const roomName = 'vpaas-magic-cookie-cd71f0da826841b094e7b0485346a24f/SkoopCustomerSupport' + new Date().toISOString().split('T')[0];
+        // Using a fixed room name that works with JaaS
+        const roomName = 'vpaas-magic-cookie-cd71f0da826841b094e7b0485346a24f/SkoopCustomerSupport';
         
         // Update the displayed room name
-        document.getElementById('roomName').textContent = 'SKOOP Customer Support - ' + new Date().toLocaleDateString();
+        document.getElementById('roomName').textContent = 'SKOOP Customer Support';
         
         function startCall() {
             const userName = document.getElementById('userName').value.trim();
