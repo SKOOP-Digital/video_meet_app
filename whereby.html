@@ -141,6 +141,18 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+
+        .room-link {
+            color: #00b7af;
+            text-decoration: none;
+            font-size: 12px;
+            margin-top: 10px;
+            display: inline-block;
+        }
+
+        .room-link:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -150,7 +162,8 @@
         
         <div class="room-info">
             <p style="color: #6a7071;">Room Name:</p>
-            <p class="room-name" id="roomName">skoop-room-8h3j5-9w2k7-5p4m1</p>
+            <p class="room-name" id="roomName">skoop-room</p>
+            <a href="https://whereby.com/skoop-room" target="_blank" class="room-link">Direct room link ↗</a>
         </div>
 
         <div class="video-container" id="videoContainer">
@@ -164,13 +177,14 @@
         </div>
 
         <div class="instructions">
-            <p>Click "Start Video Call" to begin. Share the room name with others to invite them to join. No downloads or sign-ups required.</p>
+            <p>Click "Start Video Call" to begin. Share the room name <strong>skoop-room</strong> with others to invite them to join. No downloads or sign-ups required.</p>
+            <p style="margin-top: 10px; color: #6a7071; font-size: 12px;">Note: First person in the room becomes the host. Agents should join first to ensure proper meeting control.</p>
         </div>
     </div>
 
     <script>
-        // Generate a unique Whereby room URL using free public rooms
-        const roomName = 'skoop-room-8h3j5-9w2k7-5p4m1';
+        // Using your actual Whereby room
+        const roomName = 'skoop-room';
         const wherebyRoomUrl = `https://whereby.com/${roomName}`;
         
         function startCall() {
@@ -181,7 +195,7 @@
             startScreen.innerHTML = `
                 <div class="loading">
                     <span class="spinner"></span>
-                    Connecting to video room...
+                    Connecting to SKOOP room...
                 </div>
             `;
             
@@ -189,7 +203,7 @@
             const iframe = document.createElement('iframe');
             iframe.src = wherebyRoomUrl;
             iframe.className = 'whereby-embed';
-            iframe.allow = 'camera; microphone; fullscreen; display-capture; autoplay';
+            iframe.allow = 'camera; microphone; fullscreen; display-capture; autoplay; compute-pressure';
             iframe.setAttribute('allowfullscreen', 'true');
             
             // Clear the container and add the iframe
@@ -199,11 +213,12 @@
             }, 1000);
         }
         
-        // Note: For a production implementation, you would:
-        // 1. Set up your own Whereby account and subdomain
-        // 2. Use the Whereby Embedded SDK for more control
-        // 3. Generate room URLs server-side for security
-        // 4. Add authentication if needed
+        // Keyboard shortcut - Enter to start
+        document.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter' && document.getElementById('startScreen')) {
+                startCall();
+            }
+        });
     </script>
 </body>
 </html>

@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SKOOP Video Chat - Jitsi</title>
+    <title>SKOOP Video Chat - Jitsi 8x8</title>
+    <script src='https://8x8.vc/vpaas-magic-cookie-cd71f0da826841b094e7b0485346a24f/external_api.js' async></script>
     <style>
         * {
             margin: 0;
@@ -102,7 +103,17 @@
             margin: 0 auto;
         }
 
-        #meet {
+        .warning {
+            background-color: #2a1f00;
+            border: 1px solid #ff9800;
+            color: #ff9800;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        #jaas-container {
             width: 100%;
             height: 100%;
         }
@@ -110,90 +121,183 @@
         .hidden {
             display: none;
         }
+
+        .name-input-container {
+            background-color: #1a232d;
+            padding: 30px;
+            border-radius: 8px;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .name-input {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 16px;
+            border: 2px solid #6a7071;
+            border-radius: 6px;
+            background-color: #10181f;
+            color: #ffffff;
+            margin-bottom: 20px;
+            transition: border-color 0.3s ease;
+        }
+
+        .name-input:focus {
+            outline: none;
+            border-color: #00b7af;
+        }
+
+        .name-label {
+            display: block;
+            margin-bottom: 10px;
+            color: #00b7af;
+            font-weight: 600;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1 class="logo">SKOOP</h1>
-        <p class="tagline">Connect instantly with secure video chat</p>
+        <p class="tagline">Secure video conferencing powered by Jitsi 8x8</p>
         
         <div class="room-info">
-            <p style="color: #6a7071;">Room Name:</p>
-            <p class="room-name" id="roomName">skoop-meet-7x9k2-4m8p3-2n5q1</p>
+            <p style="color: #6a7071;">Meeting Room:</p>
+            <p class="room-name" id="roomName">SKOOP Customer Support</p>
         </div>
 
         <div class="video-container" id="videoContainer">
-            <button class="start-button" id="startButton" onclick="startCall()">
-                Start Video Call
-            </button>
+            <div class="name-input-container" id="nameInputContainer">
+                <label class="name-label" for="userName">Enter your name to join:</label>
+                <input 
+                    type="text" 
+                    id="userName" 
+                    class="name-input" 
+                    placeholder="Your name"
+                    onkeypress="if(event.key === 'Enter') startCall()"
+                    autofocus
+                >
+                <button class="start-button" onclick="startCall()">
+                    Join Meeting
+                </button>
+            </div>
         </div>
 
         <div class="instructions">
-            <p>Click "Start Video Call" to begin. Share the room name with others to invite them to join.</p>
+            <p>Enter your name and click "Join Meeting" to connect with our support team. No downloads or sign-ups required.</p>
         </div>
     </div>
 
-    <script src="https://meet.jit.si/external_api.js"></script>
     <script>
         let api = null;
-        const roomName = 'skoop-meet-7x9k2-4m8p3-2n5q1';
+        // Using a simple room name format that works with JaaS
+        const roomName = 'vpaas-magic-cookie-cd71f0da826841b094e7b0485346a24f/SkoopCustomerSupport' + new Date().toISOString().split('T')[0];
+        
+        // Update the displayed room name
+        document.getElementById('roomName').textContent = 'SKOOP Customer Support - ' + new Date().toLocaleDateString();
         
         function startCall() {
-            // Hide the start button
-            document.getElementById('startButton').classList.add('hidden');
+            const userName = document.getElementById('userName').value.trim();
             
-            // Initialize Jitsi Meet
-            const domain = 'meet.jit.si';
+            if (!userName) {
+                alert('Please enter your name to join the meeting');
+                return;
+            }
+            
+            // Hide the name input
+            document.getElementById('nameInputContainer').classList.add('hidden');
+            
+            // JWT for anonymous/guest users - this is a simplified approach
+            // In production, you would generate this server-side
+            const jwt = null; // Not using JWT for guests to allow easy access
+            
             const options = {
                 roomName: roomName,
                 width: '100%',
                 height: '100%',
                 parentNode: document.querySelector('#videoContainer'),
+                userInfo: {
+                    displayName: userName,
+                    email: '' // Not required for guests
+                },
                 configOverwrite: {
                     disableDeepLinking: true,
                     startWithAudioMuted: false,
                     startWithVideoMuted: false,
                     prejoinPageEnabled: false,
+                    hideConferenceSubject: false,
+                    hideConferenceTimer: false,
+                    enableWelcomePage: false,
+                    enableClosePage: false,
+                    defaultLanguage: 'en',
+                    disableInviteFunctions: false,
+                    doNotStoreRoom: true,
+                    enableNoAudioDetection: true,
+                    enableNoisyMicDetection: true,
                     toolbarButtons: [
                         'camera',
+                        'chat',
                         'desktop',
                         'fullscreen',
                         'hangup',
                         'microphone',
                         'participants-pane',
-                        'chat',
+                        'raisehand',
                         'settings',
-                        'videoquality',
-                        'tileview'
+                        'tileview',
+                        'toggle-camera',
+                        'videoquality'
                     ]
                 },
                 interfaceConfigOverwrite: {
                     SHOW_JITSI_WATERMARK: false,
                     SHOW_WATERMARK_FOR_GUESTS: false,
+                    SHOW_BRAND_WATERMARK: false,
+                    BRAND_WATERMARK_LINK: '',
                     DEFAULT_BACKGROUND: '#1a232d',
                     TOOLBAR_ALWAYS_VISIBLE: true,
                     MOBILE_APP_PROMO: false,
                     SHOW_PROMOTIONAL_CLOSE_PAGE: false,
-                    BRAND_WATERMARK_LINK: '',
-                    JITSI_WATERMARK_LINK: ''
-                },
-                userInfo: {
-                    displayName: 'SKOOP User'
+                    HIDE_INVITE_MORE_HEADER: false,
+                    VIDEO_LAYOUT_FIT: 'both',
+                    VERTICAL_FILMSTRIP: true,
+                    FILM_STRIP_MAX_HEIGHT: 120,
+                    ENABLE_FEEDBACK_ANIMATION: false,
+                    DISABLE_FOCUS_INDICATOR: false,
+                    DISABLE_DOMINANT_SPEAKER_INDICATOR: false
                 }
             };
             
-            api = new JitsiMeetExternalAPI(domain, options);
+            // Add JWT if available (for moderators/agents)
+            if (jwt) {
+                options.jwt = jwt;
+            }
+            
+            api = new JitsiMeetExternalAPI("8x8.vc", options);
             
             // Event listeners
             api.addEventListener('videoConferenceJoined', () => {
-                console.log('User has joined the conference');
+                console.log(`${userName} has joined the conference`);
             });
             
             api.addEventListener('videoConferenceLeft', () => {
-                console.log('User has left the conference');
-                // Show the start button again
-                document.getElementById('startButton').classList.remove('hidden');
+                console.log(`${userName} has left the conference`);
+                // Reset the interface
+                document.getElementById('nameInputContainer').classList.remove('hidden');
+                document.getElementById('userName').value = '';
             });
+            
+            api.addEventListener('participantJoined', (participant) => {
+                console.log(`${participant.displayName} joined`);
+            });
+            
+            api.addEventListener('participantLeft', (participant) => {
+                console.log(`${participant.displayName} left`);
+            });
+        }
+        
+        // Auto-focus on the name input when page loads
+        window.onload = () => {
+            document.getElementById('userName').focus();
         }
     </script>
 </body>
