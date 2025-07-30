@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SKOOP Video Chat - Whereby</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: #10181f;
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 48px;
+            font-weight: 900;
+            letter-spacing: 0.1em;
+            color: #00b7af;
+            margin-bottom: 20px;
+        }
+
+        .tagline {
+            color: #6a7071;
+            font-size: 18px;
+            margin-bottom: 40px;
+        }
+
+        .video-container {
+            width: 100%;
+            height: 600px;
+            background-color: #1a232d;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .start-screen {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+        }
+
+        .start-button {
+            background-color: #00b7af;
+            color: #10181f;
+            border: none;
+            padding: 18px 40px;
+            font-size: 20px;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-top: 30px;
+        }
+
+        .start-button:hover {
+            background-color: #00a39c;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 183, 175, 0.3);
+        }
+
+        .start-button:active {
+            transform: translateY(0);
+        }
+
+        .room-info {
+            background-color: #1a232d;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .room-name {
+            color: #00b7af;
+            font-family: monospace;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        .instructions {
+            color: #6a7071;
+            font-size: 14px;
+            line-height: 1.6;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .whereby-embed {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .loading {
+            color: #6a7071;
+            font-size: 18px;
+            margin-top: 20px;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #6a7071;
+            border-top-color: #00b7af;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="logo">SKOOP</h1>
+        <p class="tagline">Premium video conferencing powered by Whereby</p>
+        
+        <div class="room-info">
+            <p style="color: #6a7071;">Room Name:</p>
+            <p class="room-name" id="roomName">skoop-room-8h3j5-9w2k7-5p4m1</p>
+        </div>
+
+        <div class="video-container" id="videoContainer">
+            <div class="start-screen" id="startScreen">
+                <p style="color: #ffffff; font-size: 24px; margin-bottom: 10px;">Ready to connect?</p>
+                <p style="color: #6a7071; margin-bottom: 30px;">Join your video meeting in one click</p>
+                <button class="start-button" onclick="startCall()">
+                    Start Video Call
+                </button>
+            </div>
+        </div>
+
+        <div class="instructions">
+            <p>Click "Start Video Call" to begin. Share the room name with others to invite them to join. No downloads or sign-ups required.</p>
+        </div>
+    </div>
+
+    <script>
+        // Generate a unique Whereby room URL using free public rooms
+        const roomName = 'skoop-room-8h3j5-9w2k7-5p4m1';
+        const wherebyRoomUrl = `https://whereby.com/${roomName}`;
+        
+        function startCall() {
+            const videoContainer = document.getElementById('videoContainer');
+            const startScreen = document.getElementById('startScreen');
+            
+            // Show loading state
+            startScreen.innerHTML = `
+                <div class="loading">
+                    <span class="spinner"></span>
+                    Connecting to video room...
+                </div>
+            `;
+            
+            // Create the Whereby iframe
+            const iframe = document.createElement('iframe');
+            iframe.src = wherebyRoomUrl;
+            iframe.className = 'whereby-embed';
+            iframe.allow = 'camera; microphone; fullscreen; display-capture; autoplay';
+            iframe.setAttribute('allowfullscreen', 'true');
+            
+            // Clear the container and add the iframe
+            setTimeout(() => {
+                videoContainer.innerHTML = '';
+                videoContainer.appendChild(iframe);
+            }, 1000);
+        }
+        
+        // Note: For a production implementation, you would:
+        // 1. Set up your own Whereby account and subdomain
+        // 2. Use the Whereby Embedded SDK for more control
+        // 3. Generate room URLs server-side for security
+        // 4. Add authentication if needed
+    </script>
+</body>
+</html>

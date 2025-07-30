@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SKOOP Video Chat - Jitsi</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: #10181f;
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 48px;
+            font-weight: 900;
+            letter-spacing: 0.1em;
+            color: #00b7af;
+            margin-bottom: 20px;
+        }
+
+        .tagline {
+            color: #6a7071;
+            font-size: 18px;
+            margin-bottom: 40px;
+        }
+
+        .video-container {
+            width: 100%;
+            height: 600px;
+            background-color: #1a232d;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .start-button {
+            background-color: #00b7af;
+            color: #10181f;
+            border: none;
+            padding: 18px 40px;
+            font-size: 20px;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .start-button:hover {
+            background-color: #00a39c;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 183, 175, 0.3);
+        }
+
+        .start-button:active {
+            transform: translateY(0);
+        }
+
+        .room-info {
+            background-color: #1a232d;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .room-name {
+            color: #00b7af;
+            font-family: monospace;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        .instructions {
+            color: #6a7071;
+            font-size: 14px;
+            line-height: 1.6;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        #meet {
+            width: 100%;
+            height: 100%;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="logo">SKOOP</h1>
+        <p class="tagline">Connect instantly with secure video chat</p>
+        
+        <div class="room-info">
+            <p style="color: #6a7071;">Room Name:</p>
+            <p class="room-name" id="roomName">skoop-meet-7x9k2-4m8p3-2n5q1</p>
+        </div>
+
+        <div class="video-container" id="videoContainer">
+            <button class="start-button" id="startButton" onclick="startCall()">
+                Start Video Call
+            </button>
+        </div>
+
+        <div class="instructions">
+            <p>Click "Start Video Call" to begin. Share the room name with others to invite them to join.</p>
+        </div>
+    </div>
+
+    <script src="https://meet.jit.si/external_api.js"></script>
+    <script>
+        let api = null;
+        const roomName = 'skoop-meet-7x9k2-4m8p3-2n5q1';
+        
+        function startCall() {
+            // Hide the start button
+            document.getElementById('startButton').classList.add('hidden');
+            
+            // Initialize Jitsi Meet
+            const domain = 'meet.jit.si';
+            const options = {
+                roomName: roomName,
+                width: '100%',
+                height: '100%',
+                parentNode: document.querySelector('#videoContainer'),
+                configOverwrite: {
+                    disableDeepLinking: true,
+                    startWithAudioMuted: false,
+                    startWithVideoMuted: false,
+                    prejoinPageEnabled: false,
+                    toolbarButtons: [
+                        'camera',
+                        'desktop',
+                        'fullscreen',
+                        'hangup',
+                        'microphone',
+                        'participants-pane',
+                        'chat',
+                        'settings',
+                        'videoquality',
+                        'tileview'
+                    ]
+                },
+                interfaceConfigOverwrite: {
+                    SHOW_JITSI_WATERMARK: false,
+                    SHOW_WATERMARK_FOR_GUESTS: false,
+                    DEFAULT_BACKGROUND: '#1a232d',
+                    TOOLBAR_ALWAYS_VISIBLE: true,
+                    MOBILE_APP_PROMO: false,
+                    SHOW_PROMOTIONAL_CLOSE_PAGE: false,
+                    BRAND_WATERMARK_LINK: '',
+                    JITSI_WATERMARK_LINK: ''
+                },
+                userInfo: {
+                    displayName: 'SKOOP User'
+                }
+            };
+            
+            api = new JitsiMeetExternalAPI(domain, options);
+            
+            // Event listeners
+            api.addEventListener('videoConferenceJoined', () => {
+                console.log('User has joined the conference');
+            });
+            
+            api.addEventListener('videoConferenceLeft', () => {
+                console.log('User has left the conference');
+                // Show the start button again
+                document.getElementById('startButton').classList.remove('hidden');
+            });
+        }
+    </script>
+</body>
+</html>
